@@ -3,3 +3,8 @@ numpy
 pandas
 pydeck
 streamlit
+jyotishyamitra
+pyswisseph==2.8.0.post1
+geopy
+datetime
+timezonefinder

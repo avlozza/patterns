@@ -1,10 +1,12 @@
 import streamlit as st
+import matplotlib.pyplot as plt
 import pandas as pd
 from datetime import datetime
 import jyotishyamitra as jsm
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 from timezonefinder import TimezoneFinder
+
 
 def display_chart_details(chart_details):
     col1, col2 = st.columns(2)
@@ -38,7 +40,7 @@ def display_chart_details(chart_details):
     df_planets['Aspects_Signs'] = df_planets['Aspects'].apply(lambda x: x.get('signs', []))
 
     # Dropping the original 'Aspects' column
-    df_planets.drop(['Aspects', 'status'], axis=1, inplace=True)
+    df_planets.drop(['Aspects', 'status','pos','symbol','rashi',df_planets.columns[0]], axis=1, inplace=True)
 
     # Displaying the modified Planets details DataFrame
     st.write("Planets Details:")
@@ -49,6 +51,45 @@ def display_chart_details(chart_details):
     df_houses = pd.DataFrame(houses_details)
     st.write("Houses Details:")
     st.write(df_houses)
+
+def display_bala_chart(bala_chart):
+    st.write("Balas Chart Details:")
+    for category, details in bala_chart.items():
+        st.write(f"{category} Details:")
+        if isinstance(details, dict):
+            df_bala = pd.DataFrame.from_dict(details, orient='index').T
+            st.write(df_bala)
+        else:
+            st.write(details)
+
+def display_ashtakavarga(ashtakavarga_data):
+    # Create an empty DataFrame to store the combined details
+    combined_df = pd.DataFrame()
+
+    for planet, positions in ashtakavarga_data.items():
+        if isinstance(positions, list):
+            df_positions = pd.DataFrame({f"{planet}_Ashtakavarga": positions})
+
+            # Combine the current positions with the existing DataFrame
+            combined_df = pd.concat([combined_df, df_positions], axis=1)
+
+    # Display the combined DataFrame
+    st.write("Combined Ashtakavarga Chart Details:")
+    st.write(combined_df)
+
+def display_sphuta(special_points_data):
+
+    # Create an empty DataFrame to store the combined details
+    combined_df = pd.DataFrame()
+    for sp_type, sp_info in special_points_data.items():
+        if isinstance(sp_info, dict):
+            for chart_type, chart_details in sp_info.items():
+                if isinstance(chart_details, dict):
+                    df_chart_details = pd.DataFrame.from_dict(chart_details, orient='index').T
+                    st.write(f"{chart_type} Details:")
+                    st.write(df_chart_details)
+
+
 
 with st.sidebar.expander("Birth Details"):
     # User input for Name
@@ -93,3 +134,43 @@ if jsm.IsBirthdataValid():
         # Extracting specific information for display in 6 dataframes
         if selected_chart in ["D1", "D2", "D3", "D4", "D7","D9", "D10","D12","D16","D20","D24","D27","D30","D40","D45","D60","Balas","AshtakaVarga","Dashas","special_points","user_details"]:  # Add other charts as needed
             display_chart_details(chart_details)
+
+with st.sidebar.expander("Balas"):
+    selected_chart = "Balas"
+
+    # Display details for the selected chart
+    if selected_chart in astrodata:
+        chart_details = astrodata[selected_chart]
+        st.write(chart_details)
+
+        # Extracting specific information for display in 6 dataframes
+        if selected_chart == "Balas":
+            # Call the function to display the Balas chart details
+            display_bala_chart(chart_details)
+
+with st.sidebar.expander("AshtakaVarga"):
+    selected_chart = "AshtakaVarga"
+
+    # Display details for the selected chart
+    if selected_chart in astrodata:
+        chart_details = astrodata[selected_chart]
+        st.write(chart_details)
+
+        # Extracting specific information for display in 6 dataframes
+        if selected_chart == "AshtakaVarga":
+            # Call the function to display the Balas chart details
+            display_ashtakavarga(chart_details)
+
+with st.sidebar.expander("special_points"):
+    selected_chart = "special_points"
+
+    # Display details for the selected chart
+    if selected_chart in astrodata:
+        chart_details = astrodata[selected_chart]
+        st.write(chart_details)
+
+        # Extracting specific information for display in 6 dataframes
+        if selected_chart == "special_points":
+            # Call the function to display the Balas chart details
+            display_sphuta(chart_details)
+

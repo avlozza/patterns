@@ -93,13 +93,13 @@ def display_sphuta(special_points_data):
 
 with st.sidebar.expander("Birth Details"):
     # User input for Name
-    name = st.text_input("Name","Garima")
+    name = st.text_input("Name")
 
     # User input for Gender
     gender = st.radio("Gender", ["Male", "Female"], horizontal=True)
 
     # User input for Date of Birth
-    dob = st.date_input("Birth Date", value=datetime(1992,4,27),min_value=datetime(1990, 1, 1))
+    dob = st.date_input("Birth Date",min_value=datetime(1990, 1, 1))
     tob = st.time_input("Birth Time")
 
     # User input for Place of Birth
